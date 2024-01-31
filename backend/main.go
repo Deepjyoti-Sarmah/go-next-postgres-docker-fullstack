@@ -122,7 +122,7 @@ func createUser(db *sql.DB) http.HandlerFunc {
 		var u User
 		json.NewDecoder(r.Body).Decode(&u)
 
-		err := db.QueryRow("INSER INTO users (name, email) VALUES ($1, $2) RETURNING id", u.Name, u.Email).Scan(&u.Id, &u.Name, &u.Email)
+		err := db.QueryRow("INSERT INTO users (name, email) VALUES ($1, $2) RETURNING id", u.Name, u.Email).Scan(&u.Id)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -158,25 +158,25 @@ func updateUser(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-func deleteUser(db *sql.DB) http.HandlerFunc  {
-  return func(w http.ResponseWriter, r *http.Request) {
-    vars := mux.Vars(r)
-    id := vars["id"]
+func deleteUser(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		id := vars["id"]
 
-    var u User
-    err := db.QueryRow("SELECT * FROM users WHERE id = $1", id).Scan(&u.Id, &u.Name, &u.Email)
+		var u User
+		err := db.QueryRow("SELECT * FROM users WHERE id = $1", id).Scan(&u.Id, &u.Name, &u.Email)
 
-    if err != nil {
-      w.WriteHeader(http.StatusNotFound)
-      return
-    }else {
-      _, err := db.Exec("DELETE from users WHERE id = $1",id)
-      if err != nil {
-        //TODO: fix error handling
-        w.WriteHeader(http.StatusNotFound)
-        return
-      }
-      json.NewEncoder(w).Encode("User deleted")
-    }
-  }
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		} else {
+			_, err := db.Exec("DELETE from users WHERE id = $1", id)
+			if err != nil {
+				//TODO: fix error handling
+				w.WriteHeader(http.StatusNotFound)
+				return
+			}
+			json.NewEncoder(w).Encode("User deleted")
+		}
+	}
 }
