@@ -24,7 +24,7 @@ const UserInterface: React.FC<UserInterfaceProps> = ({ backendName }) => {
     };
 
     const buttonColors: { [key: string]: string } = {
-        go: 'bg-cyan-700 hover: bg-blue-600 ',
+        go: 'bg-cyan-700 hover:bg-blue-600 ',
     };
 
     const bgColor = backgroundColors[backendName as keyof typeof backgroundColors] || 'bg-gray-200';
